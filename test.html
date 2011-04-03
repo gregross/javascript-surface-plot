@@ -24,8 +24,8 @@
 			
 			function setUp()
 			{
-				var numRows = 25.0;
-				var numCols = 25;
+				var numRows = 45.0;
+				var numCols = 45;
 				
 				var tooltipStrings = [];
 				var data = new google.visualization.DataTable();
@@ -43,7 +43,8 @@
 					for (var j = 0; j < numCols; j++)
 					{
 						//var value = (Math.cos(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0) + Math.sin(i * d * Math.PI / 180.0));
-						var value = (Math.sin(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0)) * 1.5;
+						var value = (Math.cos(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0));
+						//var value = (Math.sin(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0)) * 1.5;
 						
 						data.setValue(i, j, value / 4.0);
 						
