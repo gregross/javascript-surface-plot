@@ -68,11 +68,11 @@
 				var colours = [colour1, colour2, colour3, colour4, colour5];
 				
 				// Axis labels.
-				var xAxisHeader	= "";
-				var yAxisHeader	= "";
-				var zAxisHeader	= "";
+				var xAxisHeader	= "X";
+				var yAxisHeader	= "Y";
+				var zAxisHeader	= "Z";
 				
-				var options = {xPos: 50, yPos: 50, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly,
+				var options = {xPos: 300, yPos: 50, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly,
 					tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader};
 				
 				surfacePlot.draw(data, options);
