@@ -27,7 +27,7 @@
 				var numRows = 45.0;
 				var numCols = 45;
 				
-				var tooltipStrings = [];
+				var tooltipStrings = new Array();
 				var data = new google.visualization.DataTable();
 				
 				for (var i = 0; i < numCols; i++)
@@ -37,6 +37,7 @@
 				
 		        data.addRows(numRows);
 				var d = 360 / numRows;
+				var idx = 0;
 				
 				for (var i = 0; i < numRows; i++) 
 				{
@@ -48,7 +49,8 @@
 						
 						data.setValue(i, j, value / 4.0);
 						
-						tooltipStrings[i] = "x = " + value;
+						tooltipStrings[idx] = "x:" + i + ", y:" + j + " = " + value;
+						idx++;
 					}
 				}
 
