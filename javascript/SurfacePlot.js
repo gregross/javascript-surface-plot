@@ -93,12 +93,15 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 	var colourGradientObject;
 	var renderPoints = false;
 	
-	var mouseDown = false;
+	var mouseDown1 = false;
+	var mouseDown3 = false;
 	var mousePosX = null;
 	var mousePosY = null;
 	var lastMousePos = new greg.ross.visualisation.Point(0, 0);
-	var mouseButton1Up;
+	var mouseButton1Up = null;
+	var mouseButton3Up = null;
 	var mouseButton1Down = new greg.ross.visualisation.Point(0, 0);
+	var mouseButton3Down = new greg.ross.visualisation.Point(0, 0);
 	
 	function init()
     {
@@ -469,24 +472,73 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 	}
 	
 	function mouseDownd(e)
-	{
-		mouseDown = true;
-		mouseButton1Down = getMousePositionFromEvent(e);
+	{	
+		if (isShiftPressed(e))
+		{
+			mouseDown3 = true;
+			mouseButton3Down = getMousePositionFromEvent(e);
+		}
+		else
+		{
+			mouseDown1 = true;
+			mouseButton1Down = getMousePositionFromEvent(e);
+		}
 	}
 	
 	function mouseUpd(e)
 	{
-		mouseButton1Up = lastMousePos;
-		mouseDown = false;
+		if (mouseDown1)
+		{
+			mouseButton1Up = lastMousePos;
+		}
+		else if (mouseDown3)
+			{
+				mouseButton3Up = lastMousePos;
+			}
+			
+		mouseDown1 = false;
+		mouseDown3 = false;
 	}
 	
 	function mouseIsMoving(e)
 	{
-		if (mouseDown)
+		var currentPos = getMousePositionFromEvent(e);
+		
+		if (mouseDown1)
 		{
-			var currentPos = getMousePositionFromEvent(e);
 			calculateRotation(currentPos);
 		}
+		else if (mouseDown3)
+		{
+			calculateScale(currentPos);
+		}
+	}
+	
+	function isShiftPressed(e)
+	{
+		var shiftPressed=0;
+
+		 if (parseInt(navigator.appVersion)>3)
+		 {
+  			var evt = navigator.appName=="Netscape" ? e:event;
+
+  			if (navigator.appName=="Netscape" && parseInt(navigator.appVersion)==4)
+			{
+   				// NETSCAPE 4 CODE
+   				var mString =(e.modifiers+32).toString(2).substring(3,6);
+   				shiftPressed=(mString.charAt(0)=="1");
+  			}
+  			else
+			{
+   				// NEWER BROWSERS [CROSS-PLATFORM]
+   				shiftPressed=evt.shiftKey;
+ 		 	}
+  			
+			if (shiftPressed) 
+	   			return true;
+ 		}
+		
+		return false;
 	}
 	
 	function getMousePositionFromEvent(e)
@@ -539,6 +591,34 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 
 		currentZAngle = lastMousePos.x % 360;
 		currentXAngle = lastMousePos.y % 360;
+
+		closestPointToMouse = null;
+		render(data);
+	}
+	
+	function calculateScale(e)
+	{
+		lastMousePos = new greg.ross.visualisation.Point(0, greg.ross.visualisation.JSSurfacePlot.DEFAULT_SCALE/greg.ross.visualisation.JSSurfacePlot.SCALE_FACTOR);
+
+		if (mouseButton3Up == null)
+		{
+			mouseButton3Up = new greg.ross.visualisation.Point(0, greg.ross.visualisation.JSSurfacePlot.DEFAULT_SCALE/greg.ross.visualisation.JSSurfacePlot.SCALE_FACTOR);
+		}
+
+		if (mouseButton3Down != null)
+		{
+			lastMousePos = new greg.ross.visualisation.Point(mouseButton3Up.x + (mouseButton3Down.x - e.x),//
+			mouseButton3Up.y + (mouseButton3Down.y - e.y));
+		}
+
+		scale = lastMousePos.y * greg.ross.visualisation.JSSurfacePlot.SCALE_FACTOR;
+
+		if (scale < greg.ross.visualisation.JSSurfacePlot.MIN_SCALE)
+			scale = greg.ross.visualisation.JSSurfacePlot.MIN_SCALE + 1;
+		else if (scale > greg.ross.visualisation.JSSurfacePlot.MAX_SCALE)
+			scale = greg.ross.visualisation.JSSurfacePlot.MAX_SCALE - 1;
+
+		lastMousePos.y = scale / greg.ross.visualisation.JSSurfacePlot.SCALE_FACTOR;
 
 		closestPointToMouse = null;
 		render(data);
