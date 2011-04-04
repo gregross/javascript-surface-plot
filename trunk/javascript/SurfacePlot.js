@@ -314,7 +314,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 
 		for (i = 0; i < numXPoints - 1; i++)
 		{
-			for (j = 0; j < numYPoints - 1; j++)
+			for (j = 0; j < numYPoints-1; j++)
 			{
 				var polygon = new greg.ross.visualisation.Polygon(cameraPosition, false);
 
@@ -406,17 +406,11 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 		
 		// Calculate 3D points.
 		for (i = 0, xPos = -0.5; i < numXPoints; i++, xPos += xDivision) {
-			for (j = 0, yPos = -0.5; j < numYPoints; j++, yPos += yDivision) {
+			for (j = 0, yPos = 0.5; j < numYPoints; j++, yPos -= yDivision) {
 				var x = xPos;
 				var y = yPos;
 				
 				data3ds[index] = new greg.ross.visualisation.Point3D(x, y, data.getFormattedValue(i, j));
-				
-				//if (displayValues != null && displayValues.length > i && displayValues[0].length > j)
-				//	data3ds[index].setDisplayValue(displayValues[i][j]);
-				//else
-				//	data3ds[index].setDisplayValue(data[i][j] + "");
-				
 				index++;
 			}
 		}
