@@ -90,6 +90,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 	var	numYPoints;
 	var	transformation;
 	var cameraPosition;
+	var colourGradient;
 	var colourGradientObject;
 	var renderPoints = false;
 	
@@ -210,7 +211,11 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 				canvasContext.lineTo(p3.ax, p3.ay);
 				canvasContext.lineTo(p4.ax, p4.ay);
 				canvasContext.lineTo(p1.ax, p1.ay);
-				canvasContext.fill();
+				
+				if (fillRegions)
+					canvasContext.fill();
+				else
+					canvasContext.stroke();
 			}
 		}
 		
@@ -351,7 +356,14 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 			}
 		}
 		
-		colourGradientObject = new greg.ross.visualisation.ColourGradient(minZValue, maxZValue, getDefaultColourRamp());
+		var cGradient;
+		
+		if (colourGradient)
+			cGradient = colourGradient;
+		else
+			cGradient = getDefaultColourRamp();
+		
+		colourGradientObject = new greg.ross.visualisation.ColourGradient(minZValue, maxZValue, cGradient);
 		
 		var canvasWidth = width;
 		var canvasHeight = height;
