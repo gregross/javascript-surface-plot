@@ -67,7 +67,15 @@
 				var colour5 = {red:255, green:0, blue:0};
 				var colours = [colour1, colour2, colour3, colour4, colour5];
 				
-				surfacePlot.draw(data, {xPos: 50, yPos: 50, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly, tooltips: tooltipStrings});
+				// Axis labels.
+				var xAxisHeader	= "";
+				var yAxisHeader	= "";
+				var zAxisHeader	= "";
+				
+				var options = {xPos: 50, yPos: 50, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly,
+					tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader};
+				
+				surfacePlot.draw(data, options);
 			}
 			
 		</script>

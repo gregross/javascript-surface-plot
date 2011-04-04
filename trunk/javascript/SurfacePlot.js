@@ -60,9 +60,13 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options)
 	var colourGradient = options.colourGradient;
 	var fillPolygons = options.fillPolygons;
 	var tooltips = options.tooltips;
+	var xTitle = options.xTitle;
+	var yTitle = options.yTitle;
+	var zTitle = options.zTitle;
 	
 	if (this.surfacePlot == undefined)
-		this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips);
+		this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, 
+		fillPolygons, tooltips, xTitle, yTitle, zTitle);
 		
 	this.surfacePlot.redraw(data);
 }
@@ -71,7 +75,8 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options)
  * This class does most of the work.
  * *********************************
  */
-greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips)
+greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement,
+	fillRegions, tooltips, xTitle, yTitle, zTitle)
 {
 	this.targetDiv;
 	var id = allocateId();
@@ -104,6 +109,9 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 	var mouseButton1Down = new greg.ross.visualisation.Point(0, 0);
 	var mouseButton3Down = new greg.ross.visualisation.Point(0, 0);
 	var closestPointToMouse = null;
+	var xAxisHeader	= "";
+	var yAxisHeader	= "";
+	var zAxisHeader	= "";
 	
 	function init()
     {
@@ -119,13 +127,13 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 	
 	function hideTooltip()
 	{
-		tooltip.hide();
+		Tooltip.hide();
 	}
 	
 	function displayTooltip(e)
 	{
 		var position = new greg.ross.visualisation.Point(e.x, e.y);
-		tooltip.show(tooltips[closestPointToMouse], 200);
+		Tooltip.show(tooltips[closestPointToMouse], 200);
 	}
 	
 	function render(data)
@@ -1052,7 +1060,7 @@ greg.ross.visualisation.Point = function(x, y)
  * This function displays tooltips and was adapted from original code by Michael Leigeber.
  * See http://www.leigeber.com/
  */
-var tooltip = function()
+var Tooltip = function(useExplicitPositions)
 {
 	var id = 'tt';
 	var top = 3;
@@ -1104,7 +1112,8 @@ var tooltip = function()
 				else
 					tt.style.opacity = 1;
 				
-				document.onmousemove = this.pos;
+				if (!useExplicitPositions)
+					document.onmousemove = this.pos;
 			}
 			
 			tt.style.display = 'block';
@@ -1130,8 +1139,13 @@ var tooltip = function()
 			if (!ie)
 			{
 				clearInterval(tt.timer);
-				tt.timer = setInterval(function(){tooltip.fade(1)},timer);
+				tt.timer = setInterval(function(){Tooltip.fade(1)},timer);
 			}
+		},
+		setPos:function(e)
+		{
+			tt.style.top = e.y + 'px';
+			tt.style.left = e.x + 'px';
 		},
 		pos:function(e)
 		{
@@ -1179,7 +1193,7 @@ var tooltip = function()
 			if (!ie)
 			{
 				clearInterval(tt.timer);
-				tt.timer = setInterval(function(){tooltip.fade(-1)},timer);
+				tt.timer = setInterval(function(){Tooltip.fade(-1)},timer);
 			}
 			else
 			{
