@@ -547,6 +547,12 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 				}
 			}
 		
+			if (closestDist > 16)
+			{
+				hideTooltip();
+				return;
+			}
+			
 			displayTooltip(currentPos);
 		}
 	}
