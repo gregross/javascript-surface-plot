@@ -57,7 +57,14 @@
 				// Don't fill polygons in IE. It's too slow.
 				var fillPly = !isIE();
 				
-				var colours = ['#A7D30C', '#019F62', 'rgba(1,159,98,0)'];
+				// Define a colour gradient.
+				var colour1 = {red:0, green:0, blue:255};
+				var colour2 = {red:0, green:255, blue:255};
+				var colour3 = {red:0, green:255, blue:0};
+				var colour4 = {red:255, green:255, blue:0};
+				var colour5 = {red:255, green:0, blue:0};
+				var colours = [colour1, colour2, colour3, colour4, colour5];
+				
 				surfacePlot.draw(data, {xPos: 50, yPos: 50, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly, tooltips: tooltipStrings});
 			}
 			
