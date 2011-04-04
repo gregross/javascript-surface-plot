@@ -103,6 +103,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 	var mouseButton3Up = null;
 	var mouseButton1Down = new greg.ross.visualisation.Point(0, 0);
 	var mouseButton3Down = new greg.ross.visualisation.Point(0, 0);
+	var closestPointToMouse = null;
 	
 	function init()
     {
@@ -115,6 +116,17 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 		
 		createCanvas();
     }
+	
+	function hideTooltip()
+	{
+		tooltip.hide();
+	}
+	
+	function displayTooltip(e)
+	{
+		var position = new greg.ross.visualisation.Point(e.x, e.y);
+		tooltip.show(tooltips[closestPointToMouse], 200);
+	}
 	
 	function render(data)
 	{
@@ -478,7 +490,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 		canvasContext.stroke();
 		
 		canvas.onmousemove = mouseIsMoving;
-		//canvas.onmouseout = hideTooltip;
+		canvas.onmouseout = hideTooltip;
 		canvas.onmousedown = mouseDownd;
 		canvas.onmouseup = mouseUpd;
 	}
@@ -523,6 +535,25 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 		else if (mouseDown3)
 		{
 			calculateScale(currentPos);
+		}
+		else
+		{
+			closestPointToMouse = null;
+			var closestDist = Number.MAX_VALUE;
+			
+			for (var i = 0; i < data3ds.length; i++)
+			{
+				var point = data3ds[i];
+				var dist = distance({x:point.ax, y:point.ay}, currentPos);
+	
+				if (dist < closestDist)
+				{
+					closestDist = dist;
+					closestPointToMouse = i;
+				}
+			}
+		
+			displayTooltip(currentPos);
 		}
 	}
 	
@@ -887,7 +918,7 @@ greg.ross.visualisation.PolygonComaparator = function(p1, p2)
 }
 
 /*
- * Th3dtran: Clas for matrix manipuation.
+ * Th3dtran: Class for matrix manipuation.
  * ************************************************************
  */
 greg.ross.visualisation.Th3dtran = function()
@@ -1007,11 +1038,156 @@ greg.ross.visualisation.Th3dtran = function()
 	this.init();
 }
 
+/*
+ * Point: A simple 2D point.
+ * ************************************************************
+ */
 greg.ross.visualisation.Point = function(x, y)
 {
 	this.x = x;
 	this.y = y;
 }
+
+/*
+ * This function displays tooltips and was adapted from original code by Michael Leigeber.
+ * See http://www.leigeber.com/
+ */
+var tooltip = function()
+{
+	var id = 'tt';
+	var top = 3;
+	var left = 3;
+	var maxw = 300;
+	var speed = 10;
+	var timer = 20;
+	var endalpha = 95;
+	var alpha = 0;
+	var tt,t,c,b,h;
+	var ie = document.all ? true : false;
+	
+	return{
+		show:function(v,w)
+		{
+			if (tt == null)
+			{
+				tt = document.createElement('div');
+				tt.setAttribute('id',id);
+				tt.style.color = "#fff";
+				
+				tt.style.position = 'absolute';
+				tt.style.display =  'block';
+				
+				t = document.createElement('div');
+				t.setAttribute('id',id + 'top');
+				
+				t.style.display = 'block';
+				t.style.height =  '5px';
+				t.style.marginleft =  '5px';
+				t.style.overflow =  'hidden';
+				
+				c = document.createElement('div');
+				c.setAttribute('id',id + 'cont');
+				
+				b = document.createElement('div');
+				b.setAttribute('id',id + 'bot');
+				
+				tt.appendChild(t);
+				tt.appendChild(c);
+				tt.appendChild(b);
+				document.body.appendChild(tt);
+				
+				if (!ie)
+				{
+					tt.style.opacity = 0;
+					tt.style.filter = 'alpha(opacity=0)';
+				}
+				else
+					tt.style.opacity = 1;
+				
+				document.onmousemove = this.pos;
+			}
+			
+			tt.style.display = 'block';
+			c.innerHTML = '<span style="font-weight:bold; font-family: arial;">' + v + '</span>';
+			tt.style.width = w ? w + 'px' : 'auto';
+			
+			if (!w && ie)
+			{
+				t.style.display = 'none';
+				b.style.display = 'none';
+				tt.style.width = tt.offsetWidth;
+				t.style.display = 'block';
+				b.style.display = 'block';
+			}
+			
+			if (tt.offsetWidth > maxw)
+			{
+				tt.style.width = maxw + 'px';
+			}
+			
+			h = parseInt(tt.offsetHeight) + top;
+			
+			if (!ie)
+			{
+				clearInterval(tt.timer);
+				tt.timer = setInterval(function(){tooltip.fade(1)},timer);
+			}
+		},
+		pos:function(e)
+		{
+			var u = ie ? event.clientY + document.documentElement.scrollTop : e.pageY;
+			var l = ie ? event.clientX + document.documentElement.scrollLeft : e.pageX;
+			tt.style.top = (u - h) + 'px';
+			tt.style.left = (l + left) + 'px';
+		},
+		fade:function(d)
+		{
+			var a = alpha;
+			
+			if ((a != endalpha && d == 1) || (a != 0 && d == -1))
+			{
+				var i = speed;
+				
+				if (endalpha - a < speed && d == 1)
+				{
+					i = endalpha - a;
+				}
+				else if	(alpha < speed && d == -1)
+				{
+					i = a;
+				}
+			
+			alpha = a + (i * d);
+			tt.style.opacity = alpha * .01;
+			tt.style.filter = 'alpha(opacity=' + alpha + ')';
+			}
+			else
+			{
+				clearInterval(tt.timer);
+				
+				if (d == -1)
+				{
+					tt.style.display = 'none';
+				}
+			}
+		},
+		hide:function()
+		{
+			if (tt == null)
+				return;
+		
+			if (!ie)
+			{
+				clearInterval(tt.timer);
+				tt.timer = setInterval(function(){tooltip.fade(-1)},timer);
+			}
+			else
+			{
+				tt.style.display = 'none';
+			}
+		}
+	};
+}();
 
 greg.ross.visualisation.JSSurfacePlot.DEFAULT_X_ANGLE	= 47;
 greg.ross.visualisation.JSSurfacePlot.DEFAULT_Z_ANGLE	= 47;
