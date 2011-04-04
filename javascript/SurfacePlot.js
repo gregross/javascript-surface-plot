@@ -524,6 +524,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 		targetDiv.appendChild(canvas);
 		
 		canvasContext = canvas.getContext("2d");
+		canvasContext.font = "bold 18px sans-serif";
 		canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 		
 		canvasContext.fillStyle = '#000';
