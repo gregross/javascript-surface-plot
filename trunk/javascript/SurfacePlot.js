@@ -245,7 +245,8 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 		
 		canvasContext.stroke();
 		
-		renderAxisText(axes);
+		if (!isIE())
+			renderAxisText(axes);
 	}
 	
 	function renderAxisText(axes)
