@@ -54,7 +54,7 @@
 					}
 				}
 
-				surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv"));
+				var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv"));
 				
 				// Don't fill polygons in IE. It's too slow.
 				var fillPly = !isIE();
