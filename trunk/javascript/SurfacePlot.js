@@ -578,10 +578,12 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 		
 		if (mouseDown1)
 		{
+			hideTooltip();
 			calculateRotation(currentPos);
 		}
 		else if (mouseDown3)
 		{
+			hideTooltip();
 			calculateScale(currentPos);
 		}
 		else
