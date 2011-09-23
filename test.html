@@ -55,6 +55,7 @@
 				}
 
 				var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv"));
+				var surfacePlot2 = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv2"));
 				
 				// Don't fill polygons in IE. It's too slow.
 				var fillPly = !isIE();
@@ -76,12 +77,16 @@
 					tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader};
 				
 				surfacePlot.draw(data, options);
+				surfacePlot2.draw(data, options);
 			}
 			
 		</script>
 		
 		<div id='surfacePlotDiv'>
 			<!-- SurfacePlot goes here... -->
+			
+		<div id='surfacePlotDiv2'>
+			<!-- SurfacePlot2 goes here... -->
 			
 		</div>
 		
