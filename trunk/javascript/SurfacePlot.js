@@ -1170,9 +1170,11 @@ greg.ross.visualisation.Tooltip = function(useExplicitPositions)
 			else
 				tt.style.opacity = 1;
 			
-			if (!useExplicitPositions)
-				document.onmousemove = this.pos;
+			
 		}
+		
+		if (!useExplicitPositions)
+				document.onmousemove = this.pos;
 		
 		tt.style.display = 'block';
 		c.innerHTML = '<span style="font-weight:bold; font-family: arial;">' + v + '</span>';
