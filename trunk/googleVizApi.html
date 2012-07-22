@@ -6,74 +6,69 @@
                 
                 <link rel="stylesheet" href="http://magic-table.googlecode.com/svn/trunk/magic-table/google_visualisation/example.css" type="text/css">
                 <!--[if IE]><script type="text/javascript" src="http://surface-plot.googlecode.com/svn/trunk/javascript/excanvas.js"></script><![endif]-->
-				<script type="text/javascript" src='http://javascript-surface-plot.googlecode.com/svn/trunk/javascript/SurfacePlot.js'></script>
-				<script type="text/javascript" src='http://javascript-surface-plot.googlecode.com/svn/trunk/javascript/ColourGradient.js'></script>
+                <script type="text/javascript" src='http://javascript-surface-plot.googlecode.com/svn/trunk/javascript/SurfacePlot.js'></script>
+                <script type="text/javascript" src='http://javascript-surface-plot.googlecode.com/svn/trunk/javascript/ColourGradient.js'></script>
                 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
             
                 <script type="text/javascript">
                         
-					google.load("visualization", "1");
-					google.setOnLoadCallback(setUp);
-					
-					function isIE()
-				    {
-						return /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent);
-				    }
-			
-					function setUp()
-					{
-						var numRows = 45.0;
-						var numCols = 45;
-						
-						var tooltipStrings = new Array();
-						var data = new google.visualization.DataTable();
-						
-						for (var i = 0; i < numCols; i++)
-						{
-				        	data.addColumn('number', 'col'+i);
-						}
-						
-				        data.addRows(numRows);
-						var d = 360 / numRows;
-						var idx = 0;
-						
-						for (var i = 0; i < numRows; i++) 
-						{
-							for (var j = 0; j < numCols; j++)
-							{
-								var value = (Math.cos(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0));
-								
-								data.setValue(i, j, value / 4.0);
-								
-								tooltipStrings[idx] = "x:" + i + ", y:" + j + " = " + value;
-								idx++;
-							}
-						}
-		
-						surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv"));
-						
-						// Don't fill polygons in IE. It's too slow.
-						var fillPly = !isIE();
-						
-						// Define a colour gradient.
-						var colour1 = {red:0, green:0, blue:255};
-						var colour2 = {red:0, green:255, blue:255};
-						var colour3 = {red:0, green:255, blue:0};
-						var colour4 = {red:255, green:255, blue:0};
-						var colour5 = {red:255, green:0, blue:0};
-						var colours = [colour1, colour2, colour3, colour4, colour5];
-						
-						// Axis labels.
-						var xAxisHeader	= "X";
-						var yAxisHeader	= "Y";
-						var zAxisHeader	= "Z";
-						
-						var options = {xPos: 50, yPos: 0, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly,
-							tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader};
-						
-						surfacePlot.draw(data, options);
-					}
-						
+                    google.load("visualization", "1");
+                    google.setOnLoadCallback(setUp);
+                    
+                    function setUp()
+                    {
+                        var numRows = 45.0;
+                        var numCols = 45;
+                        
+                        var tooltipStrings = new Array();
+                        var data = new google.visualization.DataTable();
+                        
+                        for (var i = 0; i < numCols; i++)
+                        {
+                            data.addColumn('number', 'col'+i);
+                        }
+                        
+                        data.addRows(numRows);
+                        var d = 360 / numRows;
+                        var idx = 0;
+                        
+                        for (var i = 0; i < numRows; i++) 
+                        {
+                            for (var j = 0; j < numCols; j++)
+                            {
+                                var value = (Math.cos(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0));
+                                
+                                data.setValue(i, j, value / 4.0);
+                                
+                                tooltipStrings[idx] = "x:" + i + ", y:" + j + " = " + value;
+                                idx++;
+                            }
+                        }
+        
+                        surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv"));
+                        
+                        // Don't fill polygons in IE. It's too slow.
+                        var fillPly = true;
+                        
+                        // Define a colour gradient.
+                        var colour1 = {red:0, green:0, blue:255};
+                        var colour2 = {red:0, green:255, blue:255};
+                        var colour3 = {red:0, green:255, blue:0};
+                        var colour4 = {red:255, green:255, blue:0};
+                        var colour5 = {red:255, green:0, blue:0};
+                        var colours = [colour1, colour2, colour3, colour4, colour5];
+                        
+                        // Axis labels.
+                        var xAxisHeader = "X";
+                        var yAxisHeader = "Y";
+                        var zAxisHeader = "Z";
+                        
+                        var options = {xPos: 50, yPos: 0, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly,
+                            tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader};
+                        
+                        surfacePlot.draw(data, options);
+                    }
+                        
                 </script>
                 
         </head>
@@ -98,54 +93,54 @@
         <h1><a name="Overview" id="Overview"></a>Overview</h1>
         <p>
         This JavaScript code allows one to plot 3D surfaces.
-		<br><br>
-		Tested in Chrome, Firefox, Opera, Safari and Internet Explorer 6. <span style="font-weight:bold;">Works in IE via use of excanvas.</span> (See test.html in the download.)
-		<br><br>
-		Performs best in Safari and Chrome. 
+        <br><br>
+        Tested in Chrome, Firefox, Opera, Safari and Internet Explorer 6. <span style="font-weight:bold;">Works in IE via use of excanvas.</span> (See test.html in the download.)
+        <br><br>
+        Performs best in Safari and Chrome. 
 
-		<h2>Features</h2>
-		<p>
-			<ol>
-	          <li>
-	          	<span style="font-weight:bold;">pure JavaScript</span> implementation. <span style="font-weight:bold;">No need for Flash.</span>
-	          </li>
-	          <li>
-	            <span style="font-weight:bold;">rotation</span> - left-click and drag the mouse to rotate the surface  
-	          </li>
-			  <li>
-	            <span style="font-weight:bold;">scaling</span> - hold down the shift key and drag the mouse to scale 
-	          </li>
-			  <li>
-	            hover the mouse over the surface to see values 
-	          </li>
-			  <li>
-			  	custom axis titles (not availabe in IE)
-			  </li>
-			  <li>
-	            customisable <span style="font-weight:bold;">colour gradients</span>
-	          </li>
-			  <li>
-	            works in all popular browsers 
-	          </li>
-	        </ol>
-		</p>
-		
-		<h2>Applications</h2>
-		<p>
-			<ol>
-	          <li>
-	            visualise correlation surfaces 
-	          </li>
-	          <li>
-	            plot trigonometric functions 
-	          </li>
-			  <li>
-	            chart financial volatilities in 3D 
-	          </li>
-	        </ol>
-		</p>
+        <h2>Features</h2>
+        <p>
+            <ol>
+              <li>
+                <span style="font-weight:bold;">pure JavaScript</span> implementation. <span style="font-weight:bold;">No need for Flash.</span>
+              </li>
+              <li>
+                <span style="font-weight:bold;">rotation</span> - left-click and drag the mouse to rotate the surface  
+              </li>
+              <li>
+                <span style="font-weight:bold;">scaling</span> - hold down the shift key and drag the mouse to scale 
+              </li>
+              <li>
+                hover the mouse over the surface to see values 
+              </li>
+              <li>
+                custom axis titles (not availabe in IE)
+              </li>
+              <li>
+                customisable <span style="font-weight:bold;">colour gradients</span>
+              </li>
+              <li>
+                works in all popular browsers 
+              </li>
+            </ol>
         </p>
-		<br><br>
+        
+        <h2>Applications</h2>
+        <p>
+            <ol>
+              <li>
+                visualise correlation surfaces 
+              </li>
+              <li>
+                plot trigonometric functions 
+              </li>
+              <li>
+                chart financial volatilities in 3D 
+              </li>
+            </ol>
+        </p>
+        </p>
+        <br><br>
         <p>
             This project is hosted by Google-code. Click <a href="http://code.google.com/p/javascript-surface-plot/">here</a> to go to the homepage and see
             additional examples and documentation.
@@ -167,7 +162,7 @@
         <br>
         <br>
         <span class='bodyText'>The above example demonstrates the JavaScript 3D surface plot. 
-		This is generated by the code shown below. The code creates a plot representing the trigonometric function</span> <span style="font-weight:bold;">z = cos(x) * cos(y)</span>
+        This is generated by the code shown below. The code creates a plot representing the trigonometric function</span> <span style="font-weight:bold;">z = cos(x) * cos(y)</span>
         <br>
         <br>
         <span class='bodyText'>The following code demonstrates basic usage of the API. To see more possibilities, click
@@ -185,44 +180,39 @@
     &lt;script type="text/javascript" src="http://www.google.com/jsapi"&gt;&lt;/script&gt;
 
     &lt;title&gt;SurfacePlot test stub&lt;/title&gt;
-		
+        
   &lt;/head&gt;
   &lt;body&gt;
-		
+        
     &lt;script type='text/javascript'&gt;
-			
+            
       google.load("visualization", "1");
       google.setOnLoadCallback(setUp);
-			
-        function isIE()
-        {
-          return /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent);
-        }
-			
+            
         function setUp()
         {
           var numRows = 45.0;
           var numCols = 45;
-				
+                
           var tooltipStrings = new Array();
           var data = new google.visualization.DataTable();
-				
+                
           for (var i = 0; i &lt; numCols; i++)
           {
             data.addColumn('number', 'col'+i);
           }
-				
+                
           data.addRows(numRows);
           var d = 360 / numRows;
           var idx = 0;
-				
+                
           for (var i = 0; i &lt; numRows; i++) 
           {
             for (var j = 0; j &lt; numCols; j++)
             {
               var value = (Math.cos(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0));
               data.setValue(i, j, value / 4.0);
-		
+        
               tooltipStrings[idx] = "x:" + i + ", y:" + j + " = " + value;
               idx++;
             }
@@ -231,7 +221,7 @@
          var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv"));
 
          // Don't fill polygons in IE. It's too slow.
-         var fillPly = !isIE();
+         var fillPly = true;
 
          // Define a colour gradient.
          var colour1 = {red:0, green:0, blue:255};
@@ -247,19 +237,19 @@
          var zAxisHeader = "Z";
 
          var options = {xPos: 300, yPos: 50, width: 500, height: 500, colourGradient: colours,
-		   fillPolygons: fillPly, tooltips: tooltipStrings, xTitle: xAxisHeader,
-		   yTitle: yAxisHeader, zTitle: zAxisHeader};
-				
+           fillPolygons: fillPly, tooltips: tooltipStrings, xTitle: xAxisHeader,
+           yTitle: yAxisHeader, zTitle: zAxisHeader};
+                
         surfacePlot.draw(data, options);
       }
-			
+            
       &lt;/script&gt;
-		
+        
       &lt;div id='surfacePlotDiv'&gt;
         &lt;!-- SurfacePlot goes here... --&gt;
-			
+            
       &lt;/div&gt;
-		
+        
     &lt;/body&gt;
 &lt;/html&gt;
         </pre>
@@ -287,7 +277,7 @@ var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementByI
         <br>
         At least two rows and two columns must be created. All row and column values must be numeric. 
         
-		A tooltip for each point must be specified in a separate array. See the section on options, below, for details.
+        A tooltip for each point must be specified in a separate array. See the section on options, below, for details.
         
         <h1><a name="Configuration_Options" id="Configuration_Options"></a>Configuration Options</h1>
         
@@ -299,7 +289,7 @@ var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementByI
             <th>Default</th>
             <th>Description</th>
           </tr>
-		  <tr>
+          <tr>
             <td>xPos</td>
             <td>number</td>
             <td>0</td>
@@ -327,7 +317,7 @@ var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementByI
             <td>The height of the view.
             </td>
           </tr>
-		  <tr>
+          <tr>
             <td>colourGradient</td>
             <td>Colour array</td>
             <td>none</td>
@@ -339,7 +329,7 @@ var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementByI
             <td>boolean</td>
             <td>true</td>
             <td>Determines whether the surface is rendered with the colours specified above.
-			<span style="font-weight:bold;">Setting this option to false produces a wire frame effect.</span>
+            <span style="font-weight:bold;">Setting this option to false produces a wire frame effect.</span>
             </td>
           </tr>
           <tr>
@@ -347,21 +337,21 @@ var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementByI
             <td>String array</td>
             <td>none</td>
             <td>This is an array of strings corresponding to the points in the view.
-			The tooltip for a particular point is displayed when the mouse is moved closest to that point.</td>
+            The tooltip for a particular point is displayed when the mouse is moved closest to that point.</td>
           </tr>
-		  <tr>
+          <tr>
             <td>xTitle</td>
             <td>String</td>
             <td>none</td>
             <td>This is the x-axis title text.</td>
           </tr>
-		  <tr>
+          <tr>
             <td>yTitle</td>
             <td>String</td>
             <td>none</td>
             <td>This is the y-axis title text.</td>
           </tr>
-		  <tr>
+          <tr>
             <td>zTitle</td>
             <td>String</td>
             <td>none</td>
