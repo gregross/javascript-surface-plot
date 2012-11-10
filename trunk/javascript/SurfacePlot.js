@@ -558,6 +558,12 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         canvas.onmouseout = hideTooltip;
         canvas.onmousedown = mouseDownd;
         canvas.onmouseup = mouseUpd;
+
+        //added by edupont
+        canvas.addEventListener("touchstart", mouseDownd, false);
+		canvas.addEventListener("touchmove", mouseIsMoving, false);
+		canvas.addEventListener("touchend", mouseUpd, false);
+		canvas.addEventListener("touchcancel", hideTooltip, false);
     }
     
     function mouseDownd(e){
@@ -664,12 +670,16 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 mousePosX = e.layerX;
                 mousePosY = e.layerY;
             }
-            else 
-                if (e.offsetX || e.offsetX == 0) // Opera
-                {
-                    mousePosX = e.offsetX;
-                    mousePosY = e.offsetY;
-                }
+            else if (e.offsetX || e.offsetX == 0) // Opera
+            {
+                mousePosX = e.offsetX;
+                mousePosY = e.offsetY;
+            }
+			else if (e.touches[0].pageX || e.touches[0].pageX == 0) //touch events
+            {
+	            mousePosX = e.touches[0].pageX;
+	            mousePosY = e.touches[0].pageY;
+            }
         
         var currentPos = new greg.ross.visualisation.Point(mousePosX, mousePosY);
         
