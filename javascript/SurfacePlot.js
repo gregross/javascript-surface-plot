@@ -72,9 +72,10 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options){
     var xTitle = options.xTitle;
     var yTitle = options.yTitle;
     var zTitle = options.zTitle;
+	var restrictXRotation = options.restrictXRotation;
     
     if (this.surfacePlot == undefined) 
-        this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle);
+        this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle, restrictXRotation);
     
     this.surfacePlot.redraw(data);
 }
@@ -83,7 +84,7 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options){
  * This class does most of the work.
  * *********************************
  */
-greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips, xTitle, yTitle, zTitle){
+greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips, xTitle, yTitle, zTitle, restrictXRotation){
     this.targetDiv;
     var id = allocateId();
     var canvas;
@@ -702,6 +703,16 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         
         currentZAngle = lastMousePos.x % 360;
         currentXAngle = lastMousePos.y % 360;
+		
+		if (restrictXRotation) {
+			
+			if (currentXAngle < 0) 
+				currentXAngle = 0;
+			else 
+				if (currentXAngle > 90) 
+					currentXAngle = 90;
+					
+		}
         
         closestPointToMouse = null;
         render(data);
