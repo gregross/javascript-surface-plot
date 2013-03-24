@@ -69,7 +69,7 @@
                         var zAxisHeader = "Z";
                         
                         var options = {xPos: 50, yPos: 0, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly,
-                            tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader};
+                            tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader, restrictXRotation: false};
                         
                         surfacePlot.draw(data, options);
                     }
@@ -243,7 +243,7 @@
 
          var options = {xPos: 300, yPos: 50, width: 500, height: 500, colourGradient: colours,
            fillPolygons: fillPly, tooltips: tooltipStrings, xTitle: xAxisHeader,
-           yTitle: yAxisHeader, zTitle: zAxisHeader};
+           yTitle: yAxisHeader, zTitle: zAxisHeader, restrictXRotation: false};
                 
         surfacePlot.draw(data, options);
       }
@@ -361,6 +361,13 @@ var surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementByI
             <td>String</td>
             <td>none</td>
             <td>This is the z-axis title text.</td>
+          </tr>
+          <tr>
+            <td>restrictXRotation</td>
+            <td>Boolean</td>
+            <td>False</td>
+            <td>When set to true, this option prevents the plot from being rotated around the x-axis
+			 to the extent of revealing the underside of the surface.</td>
           </tr>
         </table>
         
