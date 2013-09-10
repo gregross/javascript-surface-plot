@@ -222,8 +222,8 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 
                 var colourValue = (p1.lz * 1.0 + p2.lz * 1.0 + p3.lz * 1.0 + p4.lz * 1.0) / 4.0;
                 
-                if (colourValue < 0) 
-                    colourValue *= -1;
+                // if (colourValue < 0) 
+                    // colourValue *= -1;
                 
                 var rgbColour = colourGradientObject.getColour(colourValue);
                 var colr = "rgb(" + rgbColour.red + "," + rgbColour.green + "," + rgbColour.blue + ")";
@@ -415,7 +415,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         
         for (var i = 0; i < numXPoints; i++) {
             for (var j = 0; j < numYPoints; j++) {
-                var value = data.getFormattedValue(i, j);
+                var value = data.getFormattedValue(i, j) * 1.0;
                 
                 if (value < minZValue) 
                     minZValue = value;
@@ -431,7 +431,10 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
             cGradient = colourGradient;
         else 
             cGradient = getDefaultColourRamp();
-        
+            
+        // if (minZValue < 0 && (minZValue*-1) > maxZValue)
+          // maxZValue = minZValue*-1;
+          
         colourGradientObject = new greg.ross.visualisation.ColourGradient(minZValue, maxZValue, cGradient);
         
         var canvasWidth = width;

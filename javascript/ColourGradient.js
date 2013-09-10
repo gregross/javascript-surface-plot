@@ -63,9 +63,9 @@ greg.ross.visualisation.ColourGradient = function(minValue, maxValue, rgbColourA
 		if (value < minValue || value > maxValue || rgbColourArray.length == 1)
 		{
 			var colr = {
-				red: rgbColourArray[0],
-				green:rgbColourArray[1],
-				blue:rgbColourArray[2]
+				red: rgbColourArray[0].red,
+				green:rgbColourArray[0].green,
+				blue:rgbColourArray[0].blue
 			};
 			
 			return colr;
