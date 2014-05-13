@@ -33,19 +33,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 /*
  * Register the name space
  * ***********************
  */
-function registerNameSpace(ns){
+function registerNameSpace(ns) {
     var nsParts = ns.split(".");
     var root = window;
     var n = nsParts.length;
-    
+
     for (var i = 0; i < n; i++) {
-        if (typeof root[nsParts[i]] == "undefined") 
-            root[nsParts[i]] = new Object();
-        
+        if (typeof root[nsParts[i]] == "undefined")
+          root[nsParts[i]] = new Object();
+
         root = root[nsParts[i]];
     }
 }
@@ -57,11 +58,11 @@ registerNameSpace("greg.ross.visualisation");
  * and represents the Google viz API.
  * ***************************************************
  */
-greg.ross.visualisation.SurfacePlot = function(container){
+greg.ross.visualisation.SurfacePlot = function (container) {
     this.containerElement = container;
 }
 
-greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options){
+greg.ross.visualisation.SurfacePlot.prototype.draw = function (data, options) {
     var xPos = options.xPos;
     var yPos = options.yPos;
     var w = options.width;
@@ -72,11 +73,11 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options){
     var xTitle = options.xTitle;
     var yTitle = options.yTitle;
     var zTitle = options.zTitle;
-	var restrictXRotation = options.restrictXRotation;
-    
+    var restrictXRotation = options.restrictXRotation;
+
     if (this.surfacePlot == undefined) 
-        this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle, restrictXRotation);
-    
+      this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle, restrictXRotation);
+
     this.surfacePlot.redraw(data);
 }
 
@@ -86,18 +87,19 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options){
  */
 greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips, xTitle, yTitle, zTitle, restrictXRotation){
     this.targetDiv;
+    var self = this;
     var id = allocateId();
     var canvas;
     var canvasContext = null;
     
     var scale = greg.ross.visualisation.JSSurfacePlot.DEFAULT_SCALE;
     
-    var currentZAngle = greg.ross.visualisation.JSSurfacePlot.DEFAULT_Z_ANGLE;
-    var currentXAngle = greg.ross.visualisation.JSSurfacePlot.DEFAULT_X_ANGLE;
+    self.currentZAngle = greg.ross.visualisation.JSSurfacePlot.DEFAULT_Z_ANGLE;
+    self.currentXAngle = greg.ross.visualisation.JSSurfacePlot.DEFAULT_X_ANGLE;
     
     this.data = null;
-	var canvas_support_checked = false;
-	var canvas_supported = true;
+    var canvas_support_checked = false;
+    var canvas_supported = true;
     var data3ds = null;
     var displayValues = null;
     var numXPoints;
@@ -146,7 +148,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         tTip.show(tooltips[closestPointToMouse], 200);
     }
     
-    function render(data){
+    self.render = function(data){
         canvasContext.clearRect(0, 0, canvas.width, canvas.height);
         canvasContext.fillStyle = '#000';
         canvasContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -161,7 +163,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         var marginY = minMargin;
         
         transformation.init();
-        transformation.rotate(currentXAngle, 0.0, currentZAngle);
+        transformation.rotate(self.currentXAngle, 0.0, self.currentZAngle);
         transformation.scale(scale);
         transformation.translate(drawingDim / 2.0 + marginX, drawingDim / 2.0 + marginY, 0.0);
         
@@ -220,10 +222,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 var p3 = polygon.getPoint(2);
                 var p4 = polygon.getPoint(3);
                 
-                var colourValue = (p1.lz * 1.0 + p2.lz * 1.0 + p3.lz * 1.0 + p4.lz * 1.0) / 4.0;
-                
-                // if (colourValue < 0) 
-                    // colourValue *= -1;
+                var colourValue = (p1.lc * 1.0 + p2.lc * 1.0 + p3.lc * 1.0 + p4.lc * 1.0) / 4.0;
                 
                 var rgbColour = colourGradientObject.getColour(colourValue);
                 var colr = "rgb(" + rgbColour.red + "," + rgbColour.green + "," + rgbColour.blue + ")";
@@ -412,6 +411,11 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         
         var minZValue = Number.MAX_VALUE;
         var maxZValue = Number.MIN_VALUE;
+
+        var minCValue = Number.MAX_VALUE;
+        var maxCValue = Number.MIN_VALUE;
+
+        var colorFunc = data.getColorValue ;
         
         for (var i = 0; i < numXPoints; i++) {
             for (var j = 0; j < numYPoints; j++) {
@@ -422,6 +426,15 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 
                 if (value > maxZValue) 
                     maxZValue = value;
+
+                var c = colorFunc ? colorFunc(i, j) : value ;
+
+                if (c < minCValue) 
+                    minCValue = c;
+                
+                if (c > maxCValue) 
+                    maxCValue = c;
+
             }
         }
         
@@ -432,10 +445,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         else 
             cGradient = getDefaultColourRamp();
             
-        // if (minZValue < 0 && (minZValue*-1) > maxZValue)
-          // maxZValue = minZValue*-1;
-          
-        colourGradientObject = new greg.ross.visualisation.ColourGradient(minZValue, maxZValue, cGradient);
+        colourGradientObject = new greg.ross.visualisation.ColourGradient(minCValue, maxCValue, cGradient);
         
         var canvasWidth = width;
         var canvasHeight = height;
@@ -455,26 +465,44 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 marginY = (canvasHeight - drawingDim) / 2;
             }
         
-        var xDivision = 1 / (numXPoints - 1);
         var yDivision = 1 / (numYPoints - 1);
-        var xPos, yPos;
         var i, j;
         var numPoints = numXPoints * numYPoints;
         data3ds = new Array();
         var index = 0;
         
         // Calculate 3D points.
-        for (i = 0, xPos = -0.5; i < numXPoints; i++, xPos += xDivision) {
-            for (j = 0, yPos = 0.5; j < numYPoints; j++, yPos -= yDivision) {
-                var x = xPos;
-                var y = yPos;
-                
-                data3ds[index] = new greg.ross.visualisation.Point3D(x, y, data.getFormattedValue(i, j));
+        var colorFunc = data.getColorValue ;
+        var xFunc = data.getXValue ;
+        
+        xFirst = xFunc ? xFunc(0) : 0 ;
+        xSize = (xFunc ? xFunc(numXPoints-1) : (numXPoints-1))-xFirst ;
+        // console.log("xx", numXPoints, xFirst, xSize) ;
+
+        var yFunc = data.getYValue ;
+        yFirst = yFunc ? yFunc(0) : 0 ;
+        ySize = (yFunc ? yFunc(numXPoints-1) : (numYPoints-1))-yFirst ;
+
+
+        for (i = 0 ; i < numXPoints; i++ ) {
+            for (j = 0; j < numYPoints; j++) {
+
+                // Normalize x to -0.5 and +0.5
+                var x = (((xFunc ? xFunc(i) : i)-xFirst)/ xSize)-0.5
+
+                // Normalize x to +0.5 and -0.5
+                var y = 0.5-(((yFunc ? yFunc(j) : j)-yFirst) / ySize)
+
+                var z = data.getFormattedValue(i, j) * 1.0;
+                var c = colorFunc ? colorFunc(i, j) : z ;
+                //console.log(x, y, z, c)
+
+                data3ds[index] = new greg.ross.visualisation.Point3D(x, y, z, c);
                 index++;
             }
         }
         
-        render(data);
+        self.render(data);
     }
     
     function allocateId(){
@@ -521,11 +549,11 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
     }
     
     function supports_canvas(){
-		if (canvas_support_checked) return canvas_supported;
-		
-		 canvas_support_checked = true;
+    if (canvas_support_checked) return canvas_supported;
+    
+     canvas_support_checked = true;
          canvas_supported = !!document.createElement('canvas').getContext;
-		 return canvas_supported;
+     return canvas_supported;
     }
     
     function createCanvas(){
@@ -565,9 +593,9 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 
         //added by edupont
         canvas.addEventListener("touchstart", mouseDownd, false);
-		canvas.addEventListener("touchmove", mouseIsMoving, false);
-		canvas.addEventListener("touchend", mouseUpd, false);
-		canvas.addEventListener("touchcancel", hideTooltip, false);
+    canvas.addEventListener("touchmove", mouseIsMoving, false);
+    canvas.addEventListener("touchend", mouseUpd, false);
+    canvas.addEventListener("touchcancel", hideTooltip, false);
     }
     
     function mouseDownd(e){
@@ -630,8 +658,8 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 
                 displayTooltip(currentPos);
             }
-			
-			return false;
+      
+      return false;
     }
     
     function isShiftPressed(e){
@@ -681,10 +709,10 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 mousePosX = e.offsetX;
                 mousePosY = e.offsetY;
             }
-			else if (e.touches[0].pageX || e.touches[0].pageX == 0) //touch events
+      else if (e.touches[0].pageX || e.touches[0].pageX == 0) //touch events
             {
-	            mousePosX = e.touches[0].pageX;
-	            mousePosY = e.touches[0].pageY;
+              mousePosX = e.touches[0].pageX;
+              mousePosY = e.touches[0].pageY;
             }
         
         var currentPos = new greg.ross.visualisation.Point(mousePosX, mousePosY);
@@ -704,21 +732,21 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
  mouseButton1Up.y + (mouseButton1Down.y - e.y));
         }
         
-        currentZAngle = lastMousePos.x % 360;
-        currentXAngle = lastMousePos.y % 360;
-		
-		if (restrictXRotation) {
-			
-			if (currentXAngle < 0) 
-				currentXAngle = 0;
-			else 
-				if (currentXAngle > 90) 
-					currentXAngle = 90;
-					
-		}
+        self.currentZAngle = lastMousePos.x % 360;
+        self.currentXAngle = lastMousePos.y % 360;
+    
+    if (restrictXRotation) {
+      
+      if (self.currentXAngle < 0) 
+        self.currentXAngle = 0;
+      else 
+        if (self.currentXAngle > 90) 
+          self.currentXAngle = 90;
+          
+    }
         
         closestPointToMouse = null;
-        render(data);
+        self.render();
     }
     
     function calculateScale(e){
@@ -744,7 +772,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         lastMousePos.y = scale / greg.ross.visualisation.JSSurfacePlot.SCALE_FACTOR;
         
         closestPointToMouse = null;
-        render(data);
+        self.render(data);
     }
     
     init();
@@ -838,7 +866,7 @@ greg.ross.visualisation.Matrix3d = function(){
  * Point3D: This class represents a 3D point.
  * ******************************************
  */
-greg.ross.visualisation.Point3D = function(x, y, z){
+greg.ross.visualisation.Point3D = function(x, y, z, c){
     this.displayValue = "";
     
     this.lx;
@@ -863,15 +891,22 @@ greg.ross.visualisation.Point3D = function(x, y, z){
         this.lt = this.wt = 1;
     }
     
-    this.init = function(x, y, z){
+    this.init = function(x, y, z, c){
         this.initPoint();
+
+  if ( c === undefined ) c = z ;
+
         this.lx = x;
         this.ly = y;
         this.lz = z;
+  this.lc = c;
+//  console.log(x, y, z, c);
+
         
         this.ax = this.lx;
         this.ay = this.ly;
         this.az = this.lz;
+  this.ax = this.lc;
     }
     
     function multiply(p){
@@ -890,7 +925,7 @@ greg.ross.visualisation.Point3D = function(x, y, z){
         this.displayValue = displayValue;
     }
     
-    this.init(x, y, z);
+    this.init(x, y, z, c);
 }
 
 /*
@@ -1224,4 +1259,3 @@ greg.ross.visualisation.JSSurfacePlot.DEFAULT_SCALE = 350;
 greg.ross.visualisation.JSSurfacePlot.MIN_SCALE = 50;
 greg.ross.visualisation.JSSurfacePlot.MAX_SCALE = 1100;
 greg.ross.visualisation.JSSurfacePlot.SCALE_FACTOR = 1.4;
-
