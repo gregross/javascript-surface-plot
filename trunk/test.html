@@ -68,8 +68,32 @@
 				var yAxisHeader	= "Y";
 				var zAxisHeader	= "Z";
 				
+				// Define some points to highlight:
+				var highlightedPoints = [
+				
+					// Highlight the polygon at coordinate (20, 10) by coloring it red and applying blue text.
+					{
+						x: 20,
+						y: 10,
+						color: "#ff0000",
+						textColor: "#0000ff",
+						text: "Hello!"
+					},
+					
+					// Highlight the polygon at coordinate (18, 2) by coloring it green and applying red text.
+					{
+						x: 18,
+						y: 2,
+						color: "#00ff00",
+						textColor: "#ff0000",
+						text: "Check out this point."
+					}
+				
+				];
+				
 				var options = {xPos: 300, yPos: 50, width: 500, height: 500, colourGradient: colours, fillPolygons: fillPly,
-					tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader, restrictXRotation: false};
+					tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader, restrictXRotation: false,
+					highlightedPoints: highlightedPoints};
 				
 				surfacePlot.draw(data, options);
 				surfacePlot2.draw(data, options);
