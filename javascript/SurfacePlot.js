@@ -60,7 +60,7 @@ registerNameSpace("greg.ross.visualisation");
  */
 greg.ross.visualisation.SurfacePlot = function (container) {
     this.containerElement = container;
-}
+};
 
 greg.ross.visualisation.SurfacePlot.prototype.draw = function (data, options) {
     var xPos = options.xPos;
@@ -74,18 +74,19 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function (data, options) {
     var yTitle = options.yTitle;
     var zTitle = options.zTitle;
     var restrictXRotation = options.restrictXRotation;
+    var highlightedPoints = options.highlightedPoints;
 
     if (this.surfacePlot == undefined) 
-      this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle, restrictXRotation);
+      this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle, restrictXRotation, highlightedPoints);
 
     this.surfacePlot.redraw(data);
-}
+};
 
 /*
  * This class does most of the work.
  * *********************************
  */
-greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips, xTitle, yTitle, zTitle, restrictXRotation){
+greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips, xTitle, yTitle, zTitle, restrictXRotation, highlightedPoints) {
     this.targetDiv;
     var self = this;
     var id = allocateId();
@@ -203,9 +204,12 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         canvasContext.lineWidth = 1;
         canvasContext.strokeStyle = '#888';
         canvasContext.lineJoin = "round";
+        var highlightedPolygons = [];
+        var numHighlightedPolygons = 0;
+        var polygon;
         
         for (i = 0; i < polygons.length; i++) {
-            var polygon = polygons[i];
+            polygon = polygons[i];
             
             if (polygon.isAnAxis()) {
                 var p1 = polygon.getPoint(0);
@@ -239,14 +243,34 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                     canvasContext.fill();
                 else 
                     canvasContext.stroke();
+                    
+                if (polygon.isHighlighted) {
+                	
+                	canvasContext.fillStyle = polygon.highlightColor;
+                	canvasContext.fill();
+                	highlightedPolygons.push(polygon);
+                	
+                }
             }
+        }
+        
+        // Render the highlighted polygon text.
+        numHighlightedPolygons = highlightedPolygons.length;
+        
+        for (i = 0; i < numHighlightedPolygons; i++) {
+        	
+        	polygon = highlightedPolygons[i];
+        	canvasContext.fillStyle = polygon.textColor;
+        	var p1 = polygon.getPoint(0);
+        	canvasContext.fillText(polygon.text, p1.ax, p1.ay);
+        	
         }
         
         canvasContext.stroke();
         
         if (supports_canvas()) 
             renderAxisText(axes);
-    }
+    };
     
     function renderAxisText(axes){
         var xLabelPoint = new greg.ross.visualisation.Point3D(0.0, 0.5, 0.0);
@@ -291,7 +315,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         
         var pivot = Math.ceil(len / 2);
         return merge(sort(array.slice(0, pivot)), sort(array.slice(pivot)));
-    }
+    };
     
     var merge = function(left, right){
         var result = [];
@@ -306,7 +330,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         
         result = result.concat(left, right);
         return result;
-    }
+    };
     
     
     function createAxes(){
@@ -346,6 +370,31 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         return axes;
     }
     
+    function highlightPolygon(p, i, j) {
+    	
+    	if (!highlightedPoints)
+    		return;
+    	
+    	var numHighlightedPoints = highlightedPoints.length;
+    	var highlightedPoint;
+    	
+    	for (var idx = 0; idx < numHighlightedPoints; idx++) {
+    		
+    		highlightedPoint = highlightedPoints[idx];
+    		
+    		if (highlightedPoint.x == i && highlightedPoint.y == j) {
+    			
+    			p.isHighlighted = true;
+    			p.highlightColor = highlightedPoint.color;
+    			p.textColor = highlightedPoint.textColor;
+    			p.text = highlightedPoint.text;
+    			
+    		}
+    		
+    	}
+    	
+    }
+    
     function createPolygons(data3D){
         var i;
         var j;
@@ -367,6 +416,8 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 polygon.addPoint(p4);
                 polygon.calculateCentroid();
                 polygon.calculateDistance();
+                
+                highlightPolygon(polygon, i, j);
                 
                 polygons[index] = polygon;
                 index++;
@@ -488,10 +539,10 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
             for (j = 0; j < numYPoints; j++) {
 
                 // Normalize x to -0.5 and +0.5
-                var x = (((xFunc ? xFunc(i) : i)-xFirst)/ xSize)-0.5
+                var x = (((xFunc ? xFunc(i) : i)-xFirst)/ xSize)-0.5;
 
                 // Normalize x to +0.5 and -0.5
-                var y = 0.5-(((yFunc ? yFunc(j) : j)-yFirst) / ySize)
+                var y = 0.5-(((yFunc ? yFunc(j) : j)-yFirst) / ySize);
 
                 var z = data.getFormattedValue(i, j) * 1.0;
                 var c = colorFunc ? colorFunc(i, j) : z ;
@@ -503,7 +554,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         }
         
         self.render(data);
-    }
+    };
     
     function allocateId(){
         var count = 0;
@@ -521,7 +572,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         this.targetDiv = document.createElement("div");
         this.targetDiv.id = id;
         this.targetDiv.className = "surfaceplot";
-        this.targetDiv.style.background = '#ffffff'
+        this.targetDiv.style.background = '#ffffff';
         this.targetDiv.style.position = 'absolute';
         
         if (!targetElement) 
@@ -776,7 +827,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
     }
     
     init();
-}
+};
 
 /**
  * Given two coordinates, return the Euclidean distance
@@ -804,11 +855,11 @@ greg.ross.visualisation.Matrix3d = function(){
         for (var i = 0; i < this.numRows; i++) {
             this.matrix[i] = new Array();
         }
-    }
+    };
     
     this.getMatrix = function(){
         return this.matrix;
-    }
+    };
     
     this.matrixReset = function(){
         for (var i = 0; i < this.numRows; i++) {
@@ -816,12 +867,12 @@ greg.ross.visualisation.Matrix3d = function(){
                 this.matrix[i][j] = 0;
             }
         }
-    }
+    };
     
     this.matrixIdentity = function(){
         this.matrixReset();
         this.matrix[0][0] = this.matrix[1][1] = this.matrix[2][2] = this.matrix[3][3] = 1;
-    }
+    };
     
     this.matrixCopy = function(newM){
         var temp = new greg.ross.visualisation.Matrix3d();
@@ -839,7 +890,7 @@ greg.ross.visualisation.Matrix3d = function(){
             this.matrix[i][2] = temp.getMatrix()[i][2];
             this.matrix[i][3] = temp.getMatrix()[i][3];
         }
-    }
+    };
     
     this.matrixMult = function(m1, m2){
         var temp = new greg.ross.visualisation.Matrix3d();
@@ -857,16 +908,16 @@ greg.ross.visualisation.Matrix3d = function(){
             m1.getMatrix()[i][2] = temp.getMatrix()[i][2];
             m1.getMatrix()[i][3] = temp.getMatrix()[i][3];
         }
-    }
+    };
     
     this.init();
-}
+};
 
 /*
  * Point3D: This class represents a 3D point.
  * ******************************************
  */
-greg.ross.visualisation.Point3D = function(x, y, z, c){
+greg.ross.visualisation.Point3D = function(x, y, z, c) {
     this.displayValue = "";
     
     this.lx;
@@ -889,25 +940,24 @@ greg.ross.visualisation.Point3D = function(x, y, z, c){
     this.initPoint = function(){
         this.lx = this.ly = this.lz = this.ax = this.ay = this.az = this.at = this.wx = this.wy = this.wz = 0;
         this.lt = this.wt = 1;
-    }
+    };
     
     this.init = function(x, y, z, c){
         this.initPoint();
 
-  if ( c === undefined ) c = z ;
-
-        this.lx = x;
-        this.ly = y;
-        this.lz = z;
-  this.lc = c;
-//  console.log(x, y, z, c);
-
-        
-        this.ax = this.lx;
-        this.ay = this.ly;
-        this.az = this.lz;
-  this.ax = this.lc;
-    }
+	  	if ( c === undefined ) c = z ;
+	
+	    this.lx = x;
+	    this.ly = y;
+	    this.lz = z;
+	  	this.lc = c;
+	        
+	    this.ax = this.lx;
+	    this.ay = this.ly;
+	    this.az = this.lz;
+	  	this.ax = this.lc;
+	  	
+    };
     
     function multiply(p){
         var Temp = new Point3D();
@@ -926,7 +976,7 @@ greg.ross.visualisation.Point3D = function(x, y, z, c){
     }
     
     this.init(x, y, z, c);
-}
+};
 
 /*
  * Polygon: This class represents a polygon on the surface plot.
@@ -941,19 +991,19 @@ greg.ross.visualisation.Polygon = function(cameraPosition, isAxis){
     
     this.isAnAxis = function(){
         return this.isAxis;
-    }
+    };
     
     this.addPoint = function(point){
         this.points[this.points.length] = point;
-    }
+    };
     
     this.distance = function(){
         return this.distance2(this.cameraPosition, this.centroid);
-    }
+    };
     
     this.calculateDistance = function(){
         this.distanceFromCamera = this.distance();
-    }
+    };
     
     this.calculateCentroid = function(){
         var xCentre = 0;
@@ -973,16 +1023,16 @@ greg.ross.visualisation.Polygon = function(cameraPosition, isAxis){
         zCentre /= numPoints;
         
         this.centroid = new greg.ross.visualisation.Point3D(xCentre, yCentre, zCentre);
-    }
+    };
     
     this.distance2 = function(p1, p2){
         return ((p1.ax - p2.ax) * (p1.ax - p2.ax)) + ((p1.ay - p2.ay) * (p1.ay - p2.ay)) + ((p1.az - p2.az) * (p1.az - p2.az));
-    }
+    };
     
     this.getPoint = function(i){
         return this.points[i];
-    }
-}
+    };
+};
 
 /*
  * PolygonComaparator: Class used to sort arrays of polygons.
@@ -1001,7 +1051,7 @@ greg.ross.visualisation.PolygonComaparator = function(p1, p2){
                 return 1;
     
     return 0;
-}
+};
 
 /*
  * Th3dtran: Class for matrix manipuation.
@@ -1021,12 +1071,12 @@ greg.ross.visualisation.Th3dtran = function(){
         this.objectMatrix = new greg.ross.visualisation.Matrix3d();
         
         this.initMatrix();
-    }
+    };
     
     this.initMatrix = function(){
         this.matrix.matrixIdentity();
         this.objectMatrix.matrixIdentity();
-    }
+    };
     
     this.translate = function(x, y, z){
         this.rMat.matrixIdentity();
@@ -1040,7 +1090,7 @@ greg.ross.visualisation.Th3dtran = function(){
         else {
             this.matrix.matrixCopy(this.rMat);
         }
-    }
+    };
     
     this.rotate = function(x, y, z){
         var rx = x * (Math.PI / 180.0);
@@ -1075,7 +1125,7 @@ greg.ross.visualisation.Th3dtran = function(){
         else {
             this.matrix.matrixCopy(this.rMatrix);
         }
-    }
+    };
     
     this.scale = function(scale){
         this.rMat.matrixIdentity();
@@ -1089,7 +1139,7 @@ greg.ross.visualisation.Th3dtran = function(){
         else {
             this.matrix.matrixCopy(this.rMat);
         }
-    }
+    };
     
     this.changeLocalObject = function(p){
         p.wx = (p.ax * this.matrix.getMatrix()[0][0] + p.ay * this.matrix.getMatrix()[1][0] + p.az * this.matrix.getMatrix()[2][0] + this.matrix.getMatrix()[3][0]);
@@ -1097,7 +1147,7 @@ greg.ross.visualisation.Th3dtran = function(){
         p.wz = (p.ax * this.matrix.getMatrix()[0][2] + p.ay * this.matrix.getMatrix()[1][2] + p.az * this.matrix.getMatrix()[2][2] + this.matrix.getMatrix()[3][2]);
         
         return p;
-    }
+    };
     
     this.ChangeObjectPoint = function(p){
         p.ax = (p.lx * this.objectMatrix.getMatrix()[0][0] + p.ly * this.objectMatrix.getMatrix()[1][0] + p.lz * this.objectMatrix.getMatrix()[2][0] + this.objectMatrix.getMatrix()[3][0]);
@@ -1105,10 +1155,10 @@ greg.ross.visualisation.Th3dtran = function(){
         p.az = (p.lx * this.objectMatrix.getMatrix()[0][2] + p.ly * this.objectMatrix.getMatrix()[1][2] + p.lz * this.objectMatrix.getMatrix()[2][2] + this.objectMatrix.getMatrix()[3][2]);
         
         return p;
-    }
+    };
     
     this.init();
-}
+};
 
 /*
  * Point: A simple 2D point.
@@ -1117,7 +1167,7 @@ greg.ross.visualisation.Th3dtran = function(){
 greg.ross.visualisation.Point = function(x, y){
     this.x = x;
     this.y = y;
-}
+};
 
 /*
  * This function displays tooltips and was adapted from original code by Michael Leigeber.
@@ -1192,22 +1242,22 @@ greg.ross.visualisation.Tooltip = function(useExplicitPositions){
         if (!ie) {
             clearInterval(tt.timer);
             tt.timer = setInterval(function(){
-                fade(1)
+                fade(1);
             }, timer);
         }
-    }
+    };
     
     this.setPos = function(e){
         tt.style.top = e.y + 'px';
         tt.style.left = e.x + 'px';
-    }
+    };
     
     this.pos = function(e){
         var u = ie ? event.clientY + document.documentElement.scrollTop : e.pageY;
         var l = ie ? event.clientX + document.documentElement.scrollLeft : e.pageX;
         tt.style.top = (u - h) + 'px';
         tt.style.left = (l + left) + 'px';
-    }
+    };
     
     function fade(d){
         var a = alpha;
@@ -1236,21 +1286,27 @@ greg.ross.visualisation.Tooltip = function(useExplicitPositions){
         }
     }
     
-    this.hide = function(){
+    this.hide = function() {
         if (tt == null) 
             return;
         
         if (!ie) {
+        	
             clearInterval(tt.timer);
-            tt.timer = setInterval(function(){
-                fade(-1)
+            
+            tt.timer = setInterval(function() {
+            	
+                fade(-1);
+                
             }, timer);
+            
         }
         else {
             tt.style.display = 'none';
         }
-    }
-}
+    };
+    
+};
 
 greg.ross.visualisation.JSSurfacePlot.DEFAULT_X_ANGLE = 47;
 greg.ross.visualisation.JSSurfacePlot.DEFAULT_Z_ANGLE = 47;
