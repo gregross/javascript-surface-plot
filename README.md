@@ -73,7 +73,7 @@ Each segment on the graph is a polygon and its geometric centroid is used in mea
 <br>
 Rotation and scaling are achieved by simple matrix manipulation.<br>
 <br>
-Colour gradients are defined by the <a href='https://github.com/gregross/javascript-surface-plot/blob/master/javascript/ColourGradient.js'>ColourGradient class</a>. This is a utility I wrote a while ago to create gradients through any path in RGB space using any number of colours. Each colour defines a point in the space and when traveling from the start colour to the end colour we obtain a path. The start and end colours are mapped to given min and max numerical bounds.  When provided with a number within those bounds, a new colour is obtained by linearly interpolating along the path in RGB space. Simples!<br>
+Colour gradients are defined by the <a href='javascript/ColourGradient.js'>ColourGradient class</a>. This is a utility I wrote a while ago to create gradients through any path in RGB space using any number of colours. Each colour defines a point in the space and when traveling from the start colour to the end colour we obtain a path. The start and end colours are mapped to given min and max numerical bounds.  When provided with a number within those bounds, a new colour is obtained by linearly interpolating along the path in RGB space. Simples!<br>
 <br>
 <br>
 
