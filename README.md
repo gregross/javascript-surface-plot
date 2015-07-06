@@ -21,7 +21,7 @@ Performs best in Safari and Chrome.
 Need Sans-GoogleVis? See [here](http://jsfiddle.net/gregross/3fcvQ/32/) for a version that does not rely on the GoogleVis API.
 
 
-Want some WebGL slickness? [See here](http://code.google.com/p/webgl-surface-plot/).
+Want some WebGL slickness? [See here](https://github.com/gregross/webgl-surface-plot).
 
 <a href='http://www.grvisualisation.50webs.com/javascript_surface_plot.html'><img src='https://github.com/gregross/javascript-surface-plot/blob/master/images/screenshot1.png' /></a>
 
