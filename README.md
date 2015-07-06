@@ -16,7 +16,7 @@ Performs best in Safari and Chrome.
 
 ## See [here](http://www.grvisualisation.50webs.com/javascript_surface_plot.html) for a working example, or play around with the plot on [jsFiddle](http://jsfiddle.net/gregross/vTBv3/). ##
 
-## See [here](https://github.com/gregross/javascript-surface-plot/blob/master/googleVizApi.html) for API details. ##
+## See [here](googleVizApi.html) for API details. ##
 
 Need Sans-GoogleVis? See [here](http://jsfiddle.net/gregross/3fcvQ/32/) for a version that does not rely on the GoogleVis API.
 
@@ -28,17 +28,17 @@ Want some WebGL slickness? [See here](https://github.com/gregross/webgl-surface-
 z = cos(x) `*` cos(y)
 <br><br>
 
-<img src='https://github.com/gregross/javascript-surface-plot/blob/master/images/screenshot2.png' />
+<img src='images/screenshot2.png' />
 
 z = sin(x) <code>*</code> cos(y)<br>
 <br><br>
 
-<img src='https://github.com/gregross/javascript-surface-plot/blob/master/images/screenshot3.png' />
+<img src='images/screenshot3.png' />
 
 z = cos(x) <code>*</code> cos(y) + sin(x)<br>
 <br><br>
 
-<img src='https://github.com/gregross/javascript-surface-plot/blob/master/images/screenshot4.png' />
+<img src='images/screenshot4.png' />
 
 a wire frame is rendered when the "fillPolygons:" option is set to false<br>
 <br><br>
@@ -53,7 +53,7 @@ a wire frame is rendered when the "fillPolygons:" option is set to false<br>
 </li><li>custom axis titles<br>
 </li><li>customisable <b>colour gradients</b>
 </li><li>works in all popular browsers<br>
-</li><li>wrapped in the <b>Google Visualization API</b>. See <a href='https://github.com/gregross/javascript-surface-plot/blob/master/googleVizApi.html'>here</a>.</li></ul>
+</li><li>wrapped in the <b>Google Visualization API</b>. See <a href='googleVizApi.html'>here</a>.</li></ul>
 
 
 
