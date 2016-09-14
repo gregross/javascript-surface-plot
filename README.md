@@ -14,7 +14,7 @@ Tested in Chrome, Firefox, Opera, Safari and Internet Explorer 6. **Works in IE 
 
 Performs best in Safari and Chrome.
 
-## See [here](http://www.grvisualisation.50webs.com/javascript_surface_plot.html) for a working example, or play around with the plot on [jsFiddle](http://jsfiddle.net/gregross/vTBv3/). ##
+## See [here](http://www.grvisualisation.50webs.com/javascript_surface_plot.html) for a working example, or play around with the plot on [jsFiddle](http://jsfiddle.net/vTBv3/653/). ##
 
 ## See [here](googleVizApi.html) for API details. ##
 
