@@ -823,7 +823,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         lastMousePos.y = scale / greg.ross.visualisation.JSSurfacePlot.SCALE_FACTOR;
         
         closestPointToMouse = null;
-        self.render(data);
+        self.render();
     }
     
     init();
